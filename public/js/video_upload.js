@@ -35,7 +35,9 @@ function validateForm(customMessage) {
 
 function uploadVideo(customMessage) {
   document.getElementById("submit").disabled = true;
-  customMessage.innerHTML = "uploading video..";
+  customMessage.innerHTML = "Đang tải lên...";
+  var progressContainer = document.getElementById("progress-container");
+  if (progressContainer) progressContainer.style.display = "block";
   var formElement = document.getElementById("video-upload");
   var request = new XMLHttpRequest();
   request.open("POST", "/", true);
@@ -45,18 +47,54 @@ function uploadVideo(customMessage) {
   request.send(data);
 }
 
+function playSuccessSound() {
+  try {
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach(function (freq, i) {
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime + i * 0.15);
+      gain.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioCtx.currentTime + i * 0.15 + 0.3
+      );
+      osc.start(audioCtx.currentTime + i * 0.15);
+      osc.stop(audioCtx.currentTime + i * 0.15 + 0.3);
+    });
+  } catch (e) {
+    // Trình duyệt không hỗ trợ Web Audio API
+  }
+}
+
 function onComplete(event) {
   var customMessage = document.getElementById("message");
   const response = JSON.parse(event.currentTarget.response);
+  var progressBar = document.getElementById("progress-bar");
+  var progressContainer = document.getElementById("progress-container");
   if (response.success) {
-    customMessage.innerHTML = "Tải lên thành công!";
+    playSuccessSound();
+    if (progressBar) {
+      progressBar.style.width = "100%";
+      progressBar.style.backgroundColor = "#2ecc71";
+    }
+    customMessage.innerHTML = "&#10004; Tải lên thành công!";
     customMessage.className = "success";
-    setTimeout(() => {
-      document.getElementById("main-div").style.display = "none";
+    setTimeout(function () {
+      var mainDiv = document.getElementById("main-div");
+      if (mainDiv) mainDiv.style.display = "none";
       customMessage.innerHTML =
-        "Tải lên thành công! <a href='/gallery.html'>Nhấn vào đây</a> để xem thư viện.";
+        '&#10004; Tải lên thành công! <a href="/gallery.html" style="color:#fffffe;text-decoration:underline;">Nhấn vào đây</a> để xem thư viện.';
     }, 2000);
   } else {
+    if (progressBar) {
+      progressBar.style.width = "100%";
+      progressBar.style.backgroundColor = "#e16162";
+    }
     customMessage.innerHTML = response.error;
     customMessage.className = "error";
   }
@@ -66,8 +104,16 @@ function onComplete(event) {
 function fileUploadPercentage(e) {
   if (e.lengthComputable) {
     var customMessage = document.getElementById("message");
+    var progressBar = document.getElementById("progress-bar");
+    var progressText = document.getElementById("progress-text");
     var percentage = Math.round((e.loaded / e.total) * 100);
     customMessage.innerHTML = "Đang tải lên: " + percentage + "%";
     customMessage.className = percentage === 100 ? "success" : "";
+    if (progressBar) {
+      progressBar.style.width = percentage + "%";
+    }
+    if (progressText) {
+      progressText.textContent = percentage + "%";
+    }
   }
 }

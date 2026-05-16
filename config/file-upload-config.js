@@ -3,7 +3,6 @@ const fs = require('fs');
 
 function fileFilter (req, file, callback) {
   var errorMessage = '';
-  // if (!file || file.mimetype !== 'video/mp4') {
   if (!file) {
     errorMessage = 'Wrong file type \"' + file.originalname.split('.').pop() + '\" found. Only mp4 video files are allowed!';
   }
