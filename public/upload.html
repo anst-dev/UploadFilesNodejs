@@ -1,54 +1,431 @@
-<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-<script src='js/video_upload.js'></script>
-<div class="relative min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-gray-500 bg-no-repeat bg-cover relative items-center"
-	style="background-image: url(https://images.unsplash.com/photo-1621243804936-775306a8f2e3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80);">
-	<div class="absolute bg-black opacity-60 inset-0 z-0"></div>
-    <div class="max-w-screen-sm p-10 bg-white rounded-xl z-10" style="width: 99%;">
-		<div class="text-center">
-			<h2 class="mt-5 text-3xl font-bold text-gray-900">
-				File Upload!
-			</h2>
-			<p class="mt-2 text-sm text-gray-400">Lorem ipsum is placeholder text.</p>
-		</div>
-        <form class="mt-8 space-y-3" action="#" method="POST">
-                    <div class="grid grid-cols-1 space-y-2">
-                        <label class="text-sm font-bold text-gray-500 tracking-wide">Title</label>
-                            <input class="text-base p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" type="" placeholder="mail@gmail.com">
-                    </div>
-                    <div class="grid grid-cols-1 space-y-2">
-                                    <label class="text-sm font-bold text-gray-500 tracking-wide">Attach Document</label>
-                        <div class="flex items-center justify-center w-full">
-                            <label class="flex flex-col rounded-lg border-4 border-dashed w-full h-60 p-10 group text-center">
-                                <div class="h-full w-full text-center flex flex-col items-center justify-center items-center  ">
-                                    <!---<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-blue-400 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                    </svg>-->
-                                    <div class="flex flex-auto max-h-48 w-2/5 mx-auto -mt-10">
-                                    <img class="has-mask h-36 object-center" src="https://img.freepik.com/free-vector/image-upload-concept-landing-page_52683-27130.jpg?size=338&ext=jpg" alt="freepik image">
-                                    </div>
-                                    <p class="pointer-none text-gray-500 "><span class="text-sm">Drag and drop</span> files here <br /> or <a href="" id="" class="text-blue-600 hover:underline">select a file</a> from your computer</p>
-                                </div>
-                                <input type="file" class="hidden">
-                            </label>
-                        </div>
-                    </div>
-                            <p class="text-sm text-gray-300">
-                                <span>File type: doc,pdf,types of images</span>
-                            </p>
-                    <div>
-                        <button onclick='onSubmit(event)'
-                        type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4  rounded-full tracking-wide
-                                    font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">
-                        Upload
-                    </button>
-                    </div>
-        </form>
-	</div>
-</div>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tải lên tệp</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      background-color: #abd1c6;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 95%;
+      max-width: 800px;
+      padding: 30px;
+      background-color: #004643;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    .nav-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+    .nav-link {
+      color: #fffffe;
+      text-decoration: none;
+      font-size: 22px;
+      margin: 0 15px;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    .nav-link:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+    .title {
+      font-size: 36px;
+      color: #fffffe;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .ip-info {
+      color: #fffffe;
+      font-size: 18px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .qr-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+    #qr-image {
+      width: 200px;
+      height: 200px;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .upload-container {
+      margin-bottom: 30px;
+    }
+    .file-drop-area {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+      padding: 25px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 2px dashed #abd1c6;
+      border-radius: 10px;
+      transition: 0.2s;
+      min-height: 150px;
+      cursor: pointer;
+    }
+    .file-drop-area.is-active {
+      background-color: rgba(171, 209, 198, 0.2);
+    }
+    .file-msg {
+      color: #fffffe;
+      font-size: 18px;
+      font-weight: 500;
+      text-align: center;
+    }
+    .file-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      cursor: pointer;
+      opacity: 0;
+    }
+    .preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      min-height: 50px;
+    }
+    .preview-item {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .preview-item img,
+    .preview-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .submit-button {
+      width: 100%;
+      padding: 15px;
+      font-size: 20px;
+      background-color: #f9bc60;
+      color: #004643;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .submit-button:hover {
+      background-color: #f8a830;
+    }
+    .submit-button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    #message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+      display: none;
+    }
+    .success {
+      background-color: #abd1c6;
+      color: #004643;
+    }
+    .error {
+      background-color: #e16162;
+      color: #fffffe;
+    }
+    .progress-container {
+      margin-top: 20px;
+      display: none;
+    }
+    .progress-bar {
+      height: 20px;
+      background-color: #abd1c6;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background-color: #f9bc60;
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .progress-text {
+      text-align: center;
+      color: #fffffe;
+      margin-top: 5px;
+      font-size: 16px;
+    }
+    .file-types {
+      color: #abd1c6;
+      font-size: 16px;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="main-div">
+    <header>
+      <nav class="nav-container">
+        <a href="/" class="nav-link">Trang chủ</a>
+        <a href="/gallery.html" class="nav-link">Thư viện</a>
+      </nav>
+    </header>
+    
+    <h1 class="title">Tải lên tệp</h1>
+    
+    <div class="ip-info">
+      <p>Nhập trên điện thoại, thiết bị: <span id="ip-address"></span></p>
+    </div>
 
-<style>
-	.has-mask {
-		position: absolute;
-		clip: rect(10px, 150px, 130px, 10px);
-	}
-</style>
+    <div class="qr-container">
+      <img src="" id="qr-image" alt="QR Code">
+    </div>
+    
+    <form enctype="multipart/form-data" name="uploadForm" id="upload-form">
+      <div class="upload-container">
+        <div class="file-drop-area">
+          <div class="file-msg">
+            <p>Kéo và thả tệp vào đây hoặc nhấn để chọn tệp</p>
+            <p><small>Hỗ trợ tải lên nhiều tệp</small></p>
+          </div>
+          <input multiple class="file-input" accept="video/mp4, video/quicktime, image/*, application/pdf" type="file" name="user-file" id="file-input">
+        </div>
+        
+        <div class="file-types">
+          <span>Loại tệp: hình ảnh, video, PDF</span>
+        </div>
+      </div>
+      
+      <div class="preview-container" id="preview-container"></div>
+      
+      <div class="progress-container" id="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text">0%</div>
+      </div>
+
+      <button type="submit" id="submit" class="submit-button" onclick="onSubmit(event)">Tải lên</button>
+    </form>
+
+    <div id="message"></div>
+  </div>
+
+  <script src="js/video_upload.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Xử lý kéo và thả
+      const dropArea = document.querySelector('.file-drop-area');
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        dropArea.classList.add('is-active');
+      }
+      
+      function unhighlight() {
+        dropArea.classList.remove('is-active');
+      }
+      
+      dropArea.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        document.getElementById('file-input').files = files;
+        previewFiles();
+      }
+    });
+
+    function previewFiles() {
+      const preview = document.getElementById('preview-container');
+      const files = document.getElementById('file-input').files;
+      
+      preview.innerHTML = '';
+      
+      function readAndPreview(file) {
+        if (/\.(jpe?g|png|gif)$/i.test(file.name)) {
+          const reader = new FileReader();
+          
+          reader.addEventListener("load", function() {
+            const container = document.createElement('div');
+            container.className = 'preview-item';
+            
+            const image = new Image();
+            image.title = file.name;
+            image.src = this.result;
+            
+            container.appendChild(image);
+            preview.appendChild(container);
+          }, false);
+          
+          reader.readAsDataURL(file);
+        } else if (/\.(mp4|mov|avi|webm)$/i.test(file.name)) {
+          const container = document.createElement('div');
+          container.className = 'preview-item';
+          
+          const video = document.createElement('video');
+          video.title = file.name;
+          video.src = URL.createObjectURL(file);
+          video.controls = true;
+          
+          container.appendChild(video);
+          preview.appendChild(container);
+        } else if (/\.(pdf)$/i.test(file.name)) {
+          const container = document.createElement('div');
+          container.className = 'preview-item';
+          
+          const icon = document.createElement('div');
+          icon.innerHTML = `
+            <div style="background-color: #f44336; height: 100%; display: flex; align-items: center; justify-content: center;">
+              <span style="color: white; font-weight: bold; text-align: center;">
+                PDF<br>${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}
+              </span>
+            </div>
+          `;
+          
+          container.appendChild(icon);
+          preview.appendChild(container);
+        }
+      }
+      
+      if (files) {
+        Array.from(files).forEach(readAndPreview);
+      }
+    }
+
+    document.getElementById('file-input').addEventListener('change', previewFiles);
+
+    // Cập nhật hàm validateForm để hỗ trợ nhiều loại tệp
+    function validateForm(customMessage) {
+      const fileInput = document.getElementById("file-input");
+      const files = fileInput.files;
+      
+      if (!files || files.length === 0) {
+        customMessage.style.display = 'block';
+        customMessage.className = 'error';
+        customMessage.innerHTML = "Vui lòng chọn ít nhất một tệp để tải lên";
+        return false;
+      }
+      
+      const fileLimit = 104857600; // 100MB
+      
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].size > fileLimit) {
+          customMessage.style.display = 'block';
+          customMessage.className = 'error';
+          customMessage.innerHTML = `Tệp ${files[i].name} vượt quá kích thước tối đa cho phép: 100MB`;
+          return false;
+        }
+      }
+      
+      return true;
+    }
+
+    // Cải thiện hàm uploadVideo để hiển thị tiến trình tải lên đẹp hơn
+    function uploadVideo(customMessage) {
+      document.getElementById("submit").disabled = true;
+      customMessage.style.display = 'block';
+      customMessage.className = '';
+      customMessage.innerHTML = "Đang chuẩn bị tải lên...";
+      
+      // Hiển thị thanh tiến độ
+      const progressContainer = document.getElementById("progress-container");
+      progressContainer.style.display = 'block';
+      
+      var formElement = document.getElementById("upload-form");
+      var request = new XMLHttpRequest();
+      request.open("POST", "/", true);
+      request.onload = onComplete;
+      request.upload.onprogress = fileUploadPercentage;
+      const data = new FormData(formElement);
+      request.send(data);
+    }
+
+    // Cập nhật hàm fileUploadPercentage để hiển thị tiến trình đẹp hơn
+    function fileUploadPercentage(e) {
+      if (e.lengthComputable) {
+        var customMessage = document.getElementById("message");
+        var percentage = Math.round((e.loaded / e.total) * 100);
+        
+        // Cập nhật thanh tiến độ
+        const progressFill = document.getElementById("progress-fill");
+        const progressText = document.getElementById("progress-text");
+        
+        progressFill.style.width = percentage + "%";
+        progressText.innerHTML = percentage + "%";
+        
+        customMessage.innerHTML = "Đang tải lên...";
+      }
+    }
+
+    // Cập nhật hàm onComplete để hiển thị kết quả
+    function onComplete(event) {
+      var customMessage = document.getElementById("message");
+      const progressContainer = document.getElementById("progress-container");
+      
+      try {
+        const response = JSON.parse(event.currentTarget.response);
+        if (response.success) {
+          customMessage.innerHTML = "Tải lên thành công!";
+          customMessage.className = "success";
+          progressContainer.style.display = 'none';
+          
+          setTimeout(() => {
+            customMessage.innerHTML = "Tải lên thành công! <a href='/gallery.html' style='color: #004643; text-decoration: underline; font-weight: bold;'>Nhấn vào đây</a> để xem thư viện.";
+          }, 1000);
+        } else {
+          customMessage.innerHTML = response.error || "Có lỗi xảy ra khi tải lên tệp";
+          customMessage.className = "error";
+          progressContainer.style.display = 'none';
+        }
+      } catch (error) {
+        customMessage.innerHTML = "Có lỗi xảy ra khi tải lên tệp";
+        customMessage.className = "error";
+        progressContainer.style.display = 'none';
+      }
+      
+      document.getElementById("submit").disabled = false;
+    }
+  </script>
+</body>
+</html>

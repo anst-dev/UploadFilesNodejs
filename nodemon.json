@@ -1,0 +1,23 @@
+{
+  "verbose": true,
+  "ignore": [
+    "node_modules/*",
+    "uploads/*",
+    "Logs/*",
+    "db/uploaded-files.js",
+    ".git",
+    "*.log"
+  ],
+  "watch": [
+    "server.js",
+    "controllers/",
+    "routes/",
+    "config/",
+    "util/",
+    "public/"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js,json,html,css"
+}

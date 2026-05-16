@@ -3,7 +3,18 @@ const fs = require('fs');
 const path = require("path");
 const app = express();
 const multer = require("multer");
-const includeMulter = multer().any();
+
+// Tăng giới hạn cho express
+app.use(express.json({limit: '10gb'}));
+app.use(express.urlencoded({extended: true, limit: '10gb'}));
+
+// Cấu hình multer với giới hạn cao
+const includeMulter = multer({
+  limits: {
+    fileSize: 10 * 1024 * 1024 * 1024, // 10GB
+    fieldSize: 10 * 1024 * 1024 * 1024 // 10GB cho mỗi field
+  }
+}).any();
 const routes = require("./routes/");
 require("./util/readenv").config();
 let open;
@@ -47,7 +58,12 @@ app.use(function (req, res, next) {
   shouldParseRequest(req) ? includeMulter(req, res, next) : next();
 });
 
-app.use(express.static("public"));
+// Tối ưu static serving
+app.use(express.static("public", {
+  maxAge: '1d', // Cache trong 1 ngày
+  etag: false, // Tắt etag để giảm overhead
+  lastModified: false // Tắt lastModified để giảm overhead
+}));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.get('/get-uploads', function (req, res) {
@@ -55,7 +71,38 @@ app.get('/get-uploads', function (req, res) {
     if (err) {
       res.status(500).send('Error reading files');
     } else {
-      res.json(files);
+      // Lấy thông tin chi tiết của từng file bao gồm kích thước
+      const fileDetailsPromises = files.map(file => {
+        return new Promise((resolve, reject) => {
+          const filePath = path.join(__dirname, 'uploads', file);
+          fs.stat(filePath, (err, stats) => {
+            if (err) {
+              resolve({
+                name: file,
+                size: 0,
+                error: 'Error reading file stats'
+              });
+            } else {
+              resolve({
+                name: file,
+                size: stats.size,
+                created: stats.birthtime,
+                modified: stats.mtime,
+                isFile: stats.isFile()
+              });
+            }
+          });
+        });
+      });
+
+      Promise.all(fileDetailsPromises)
+        .then(fileDetails => {
+          res.json(fileDetails);
+        })
+        .catch(error => {
+          console.error('Error getting file details:', error);
+          res.status(500).send('Error processing files');
+        });
     }
   });
 });

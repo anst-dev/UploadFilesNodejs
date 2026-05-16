@@ -29,13 +29,13 @@ module.exports.initUploadPage = function(req, res) {
 module.exports.uploadFile = function(req, res) {
   var upload = multer(fileUploadConfig).array('user-file',1000);
   let links = [];
-  upload(req, res, async function(uploadError){
-    if(uploadError){
+  upload(req, res, async function(uploadError) {
+    if(uploadError) {
       var errorMessage;
       if(uploadError.code === 'LIMIT_FILE_TYPE') {
         errorMessage = uploadError.errorMessage;
       } else if(uploadError.code === 'LIMIT_FILE_SIZE'){
-          errorMessage = 'Maximum file size allowed is ' + process.env.FILE_SIZE + 'MB';
+        errorMessage = 'Maximum file size allowed is ' + process.env.FILE_SIZE + 'MB';
       }
       return res.json({
         error: errorMessage

@@ -1,113 +1,782 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<link rel="stylesheet" href="css/styles.css">
-<style>
-  .container {
-    width: 95%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 30px;
-    background-color: #004643;
-    border-radius: 15px;
-  }
-  .gallery-section {
-    margin-bottom: 30px;
-  }
-  .gallery-title {
-    font-size: 28px;
-    color: #fffffe;
-    margin-bottom: 20px;
-  }
-  .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-  .gallery-item {
-    background-color: #abd1c6;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .gallery-item img,
-  .gallery-item video {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-  .gallery-item a {
-    display: block;
-    padding: 15px;
-    text-align: center;
-    color: #004643;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  .gallery-item-buttons {
-    display: flex;
-    justify-content: space-around;
-    padding: 10px;
-  }
-  .gallery-item-button {
-    padding: 8px 12px;
-    background-color: #f9bc60;
-    color: #004643;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    text-decoration: none;
-  }
-</style>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thư viện tệp</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #abd1c6;
+      font-family: Arial, sans-serif;
+      color: #fffffe;
+    }
+    .container {
+      width: 95%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: #004643;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .nav-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .nav-link {
+      color: #fffffe;
+      text-decoration: none;
+      font-size: 22px;
+      padding: 10px 15px;
+      margin: 0 15px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .gallery-section {
+      margin-bottom: 40px;
+    }
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .gallery-title {
+      font-size: 28px;
+      color: #fffffe;
+      margin: 0;
+    }
+    .gallery-controls {
+      display: flex;
+      align-items: center;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .gallery-item {
+      background-color: #abd1c6;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .gallery-item:hover {
+      transform: translateY(-5px);
+    }
+    .gallery-item img,
+    .gallery-item video {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .gallery-item-info {
+      padding: 15px;
+      color: #004643;
+    }
+    .gallery-item-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+      word-break: break-all;
+    }
+    .gallery-item-meta {
+      font-size: 12px;
+      color: #004643;
+      opacity: 0.8;
+      margin-bottom: 3px;
+    }
+    .gallery-item-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    .gallery-item-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 11px;
+      background-color: rgba(0, 70, 67, 0.15);
+      border-radius: 12px;
+      color: #004643;
+    }
+    .gallery-item-badge.file-size {
+      background-color: rgba(249, 188, 96, 0.3);
+      color: #004643;
+    }
+    .gallery-item-badge.file-date {
+      background-color: rgba(0, 70, 67, 0.2);
+    }
+    .gallery-item-buttons {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background-color: rgba(0, 70, 67, 0.05);
+    }
+    .gallery-item-button {
+      padding: 8px 12px;
+      background-color: #f9bc60;
+      color: #004643;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+    .gallery-item-button:hover {
+      background-color: #f8a830;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .pagination-button {
+      margin: 0 5px;
+      padding: 8px 12px;
+      background-color: #abd1c6;
+      color: #004643;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .pagination-button.active {
+      background-color: #f9bc60;
+    }
+    .pagination-button.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .search-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    @media (max-width: 768px) {
+      .search-box {
+        flex-direction: column;
+      }
+      .search-input {
+        width: 100%;
+        border-radius: 5px;
+      }
+      #search-button {
+        width: 100%;
+        border-radius: 5px;
+      }
+      #clear-filters {
+        width: 100%;
+      }
+      .filter-dropdown,
+      .sort-dropdown {
+        width: 100%;
+        margin-left: 0;
+      }
+      .container {
+        width: 100%;
+        padding: 15px;
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+      .gallery-item-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .gallery-item-button {
+        width: 100%;
+        text-align: center;
+      }
+      .file-details-content {
+        width: 95%;
+        margin: 10px;
+        padding: 15px;
+      }
+      .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
+      }
+      .pagination-button {
+        margin: 2px;
+      }
+      .gallery-title {
+        font-size: 20px;
+      }
+      body {
+        padding: 10px;
+      }
+    }
+    .search-input {
+      flex-grow: 1;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px 0 0 5px;
+      font-size: 16px;
+    }
+    .search-button {
+      padding: 10px 20px;
+      background-color: #f9bc60;
+      color: #004643;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #search-button {
+      border-radius: 0 5px 5px 0;
+    }
+    #clear-filters {
+      margin-left: 10px;
+      border-radius: 5px;
+      background-color: #e16162;
+    }
+    .filter-dropdown {
+      padding: 8px;
+      margin-left: 10px;
+      border-radius: 5px;
+      border: none;
+      background-color: #abd1c6;
+      color: #004643;
+      font-weight: bold;
+    }
+    .sort-dropdown {
+      padding: 8px;
+      margin-left: 10px;
+      border-radius: 5px;
+      border: none;
+      background-color: #abd1c6;
+      color: #004643;
+      font-weight: bold;
+    }
+    .empty-gallery {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .empty-gallery-message {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    .empty-gallery-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #f9bc60;
+      color: #004643;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .file-details-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .file-details-content {
+      background-color: #abd1c6;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      color: #004643;
+      position: relative;
+    }
+    .close-popup {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #004643;
+    }
+    .file-details-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .file-details-preview {
+      width: 80px;
+      height: 80px;
+      margin-right: 15px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .file-details-name {
+      font-size: 20px;
+      font-weight: bold;
+      word-break: break-all;
+    }
+    .file-details-info {
+      margin-bottom: 20px;
+    }
+    .file-details-row {
+      display: flex;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 70, 67, 0.1);
+      padding-bottom: 8px;
+    }
+    .file-details-label {
+      flex: 0 0 120px;
+      font-weight: bold;
+    }
+    .file-details-value {
+      flex-grow: 1;
+    }
+    .file-details-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .file-details-button {
+      padding: 10px 20px;
+      background-color: #f9bc60;
+      color: #004643;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <header style="margin-bottom: 30px;">
-      <nav style="display: flex; justify-content: center;">
-        <a href="/" class="nav-link" style="color: #fffffe; text-decoration: none; font-size: 24px; margin: 0 15px; padding: 10px; border-radius: 5px; transition: background-color 0.3s;">Trang chủ</a>
-        <a href="/gallery.html" class="nav-link" style="color: #fffffe; text-decoration: none; font-size: 24px; margin: 0 15px; padding: 10px; border-radius: 5px; transition: background-color 0.3s;">Thư viện</a>
+    <header>
+      <nav class="nav-container">
+        <a href="/" class="nav-link">Trang chủ</a>
+        <a href="/gallery.html" class="nav-link">Thư viện</a>
       </nav>
     </header>
 
+    <div class="search-box">
+      <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm tệp...">
+      <button id="search-button" class="search-button">Tìm kiếm</button>
+      <button id="clear-filters" class="search-button">Xóa bộ lọc</button>
+      <select id="filter-type" class="filter-dropdown">
+        <option value="all">Tất cả</option>
+        <option value="images">Hình ảnh</option>
+        <option value="videos">Video</option>
+        <option value="others">Khác</option>
+      </select>
+      <select id="sort-by" class="sort-dropdown">
+        <option value="date">Sắp xếp theo ngày</option>
+        <option value="name">Sắp xếp theo tên</option>
+        <option value="size">Sắp xếp theo kích thước</option>
+      </select>
+    </div>
+
     <div class="gallery-section">
-      <h3 class="gallery-title">Hình ảnh</h3>
+      <div class="gallery-header">
+        <h3 class="gallery-title">Hình ảnh</h3>
+        <div class="gallery-controls">
+          <span id="image-count"></span>
+        </div>
+      </div>
       <div id="image-gallery" class="gallery-grid"></div>
+      <div id="image-pagination" class="pagination"></div>
     </div>
 
     <div class="gallery-section">
-      <h3 class="gallery-title">Video</h3>
+      <div class="gallery-header">
+        <h3 class="gallery-title">Video</h3>
+        <div class="gallery-controls">
+          <span id="video-count"></span>
+        </div>
+      </div>
       <div id="video-gallery" class="gallery-grid"></div>
+      <div id="video-pagination" class="pagination"></div>
     </div>
 
     <div class="gallery-section">
-      <h3 class="gallery-title">Các dạng file khác</h3>
+      <div class="gallery-header">
+        <h3 class="gallery-title">Các dạng tệp khác</h3>
+        <div class="gallery-controls">
+          <span id="other-count"></span>
+        </div>
+      </div>
       <div id="other-files" class="gallery-grid"></div>
+      <div id="other-pagination" class="pagination"></div>
+    </div>
+
+    <!-- Popup chi tiết tệp -->
+    <div id="file-details-popup" class="file-details-popup">
+      <div class="file-details-content">
+        <span class="close-popup" onclick="closeFileDetails()">&times;</span>
+        <div class="file-details-header">
+          <div id="file-details-preview" class="file-details-preview"></div>
+          <h3 id="file-details-name" class="file-details-name"></h3>
+        </div>
+        <div class="file-details-info">
+          <div class="file-details-row">
+            <div class="file-details-label">Loại tệp:</div>
+            <div id="file-details-type" class="file-details-value"></div>
+          </div>
+          <div class="file-details-row">
+            <div class="file-details-label">Kích thước:</div>
+            <div id="file-details-size" class="file-details-value"></div>
+          </div>
+          <div class="file-details-row">
+            <div class="file-details-label">Ngày tạo:</div>
+            <div id="file-details-created" class="file-details-value"></div>
+          </div>
+          <div class="file-details-row">
+            <div class="file-details-label">Cập nhật:</div>
+            <div id="file-details-modified" class="file-details-value"></div>
+          </div>
+          <div class="file-details-row">
+            <div class="file-details-label">Đường dẫn:</div>
+            <div id="file-details-path" class="file-details-value"></div>
+          </div>
+        </div>
+        <div class="file-details-actions">
+          <a id="file-details-view" href="#" target="_blank" class="file-details-button">Xem</a>
+          <a id="file-details-download" href="#" download class="file-details-button">Tải xuống</a>
+        </div>
+      </div>
     </div>
 
     <script>
       $(document).ready(function () {
-        $.get("/get-uploads", function (files) {
-          files.forEach(function (file) {
-            var fileExtension = file.split(".").pop().toLowerCase();
-            var filePath = "/uploads/" + file;
-            var galleryItem = $('<div class="gallery-item"></div>');
+        // Khai báo biến toàn cục
+        let allFiles = [];
+        const itemsPerPage = 8;
+        let currentImagePage = 1;
+        let currentVideoPage = 1;
+        let currentOtherPage = 1;
+        let searchTerm = '';
+        let currentFilter = 'all';
+        let currentSort = 'date';
 
-            if (['jpg', 'png', 'jpeg', 'gif'].includes(fileExtension)) {
-              galleryItem.append('<img src="' + filePath + '" alt="' + file + '" />');
-              $('#image-gallery').append(galleryItem);
-            } else if (['mp4', 'mov', 'avi', 'webm'].includes(fileExtension)) {
-              galleryItem.append('<video controls><source src="' + filePath + '" type="video/' + (fileExtension === 'mov' ? 'quicktime' : fileExtension) + '">Your browser does not support the video tag.</video>');
-              $('#video-gallery').append(galleryItem);
-            } else {
-              galleryItem.append('<a href="' + filePath + '" target="_blank">' + file + '</a>');
-              $('#other-files').append(galleryItem);
-            }
+        // Format kích thước file thành đơn vị dễ đọc (KB, MB, GB)
+        function formatFileSize(bytes) {
+          if (bytes === 0) return '0 Bytes';
+          const k = 1024;
+          const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+          const i = Math.floor(Math.log(bytes) / Math.log(k));
+          return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
 
-            var buttonsDiv = $('<div class="gallery-item-buttons"></div>');
-            buttonsDiv.append('<a href="' + filePath + '" download class="gallery-item-button">Tải xuống</a>');
-            buttonsDiv.append('<a href="' + filePath + '" target="_blank" class="gallery-item-button">Xem</a>');
-            galleryItem.append(buttonsDiv);
+        // Format ngày giờ thành định dạng dễ đọc
+        function formatDate(dateString) {
+          if (!dateString) return 'Không xác định';
+          const date = new Date(dateString);
+          return date.toLocaleDateString('vi-VN', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
           });
+        }
+
+        // Lấy danh sách tệp từ server
+        function fetchFiles() {
+          $.get("/get-uploads", function (files) {
+            allFiles = files;
+            applyFiltersAndSearch();
+          });
+        }
+
+        // Hiển thị popup chi tiết tệp
+        function showFileDetails(file) {
+          const fileExtension = file.name.split(".").pop().toLowerCase();
+          const filePath = "/uploads/" + file.name;
+          const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
+          const isVideo = ['mp4', 'mov', 'webm', 'avi'].includes(fileExtension);
+          
+          // Hiển thị xem trước
+          const previewContainer = $("#file-details-preview");
+          previewContainer.empty();
+          
+          if (isImage) {
+            previewContainer.html(`<img src="${filePath}" style="width: 100%; height: 100%; object-fit: cover;">`);
+          } else if (isVideo) {
+            previewContainer.html(`<div style="background-color: #f9bc60; height: 100%; display: flex; align-items: center; justify-content: center;"><span style="font-size: 12px; color: #004643;">VIDEO</span></div>`);
+          } else {
+            previewContainer.html(`<div style="background-color: #f9bc60; height: 100%; display: flex; align-items: center; justify-content: center;"><span style="font-size: 12px; color: #004643;">FILE</span></div>`);
+          }
+          
+          // Hiển thị thông tin
+          $("#file-details-name").text(file.name);
+          $("#file-details-type").text(isImage ? 'Hình ảnh' : (isVideo ? 'Video' : 'Tệp khác'));
+          $("#file-details-size").text(formatFileSize(file.size));
+          $("#file-details-created").text(formatDate(file.created));
+          $("#file-details-modified").text(formatDate(file.modified));
+          $("#file-details-path").text(filePath);
+          
+          // Cập nhật đường dẫn
+          $("#file-details-view").attr("href", filePath);
+          $("#file-details-download").attr("href", filePath);
+          
+          // Hiển thị popup
+          $("#file-details-popup").css("display", "flex");
+        }
+
+        // Đóng popup chi tiết tệp
+        window.closeFileDetails = function() {
+          $("#file-details-popup").css("display", "none");
+        }
+
+        // Click bên ngoài popup để đóng
+        $(document).on("click", function(event) {
+          if ($(event.target).is("#file-details-popup")) {
+            closeFileDetails();
+          }
         });
+
+        // Lọc tệp theo loại và tìm kiếm
+        function applyFiltersAndSearch() {
+          let imageFiles = [];
+          let videoFiles = [];
+          let otherFiles = [];
+
+          allFiles.forEach(function (file) {
+            const fileName = file.name.toLowerCase();
+            const fileExtension = fileName.split(".").pop().toLowerCase();
+            
+            // Kiểm tra điều kiện tìm kiếm
+            if (searchTerm && !fileName.includes(searchTerm.toLowerCase())) {
+              return;
+            }
+            
+            // Lọc theo loại tệp
+            if (currentFilter === 'images' || currentFilter === 'all') {
+              if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                imageFiles.push(file);
+              }
+            }
+            
+            if (currentFilter === 'videos' || currentFilter === 'all') {
+              if (['mp4', 'mov', 'webm', 'avi'].includes(fileExtension)) {
+                videoFiles.push(file);
+              }
+            }
+            
+            if (currentFilter === 'others' || currentFilter === 'all') {
+              if (!['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'webm', 'avi'].includes(fileExtension)) {
+                otherFiles.push(file);
+              }
+            }
+          });
+
+          // Sắp xếp tệp theo tiêu chí đã chọn
+          function sortFiles(files) {
+            return files.sort((a, b) => {
+              switch(currentSort) {
+                case 'size':
+                  return b.size - a.size; // Sắp xếp theo kích thước giảm dần
+                case 'date':
+                  return new Date(b.modified) - new Date(a.modified); // Sắp xếp theo ngày giảm dần
+                case 'name':
+                default:
+                  return a.name.localeCompare(b.name); // Sắp xếp theo tên tăng dần
+              }
+            });
+          }
+
+          // Sắp xếp tệp
+          imageFiles = sortFiles(imageFiles);
+          videoFiles = sortFiles(videoFiles);
+          otherFiles = sortFiles(otherFiles);
+
+          // Hiển thị số lượng tệp mỗi loại
+          $('#image-count').text(`${imageFiles.length} hình ảnh`);
+          $('#video-count').text(`${videoFiles.length} video`);
+          $('#other-count').text(`${otherFiles.length} tệp`);
+
+          // Hiển thị các tệp với phân trang
+          displayPaginatedFiles("#image-gallery", "#image-pagination", imageFiles, currentImagePage, function(page) {
+            currentImagePage = page;
+            displayPaginatedFiles("#image-gallery", "#image-pagination", imageFiles, page);
+          });
+          
+          displayPaginatedFiles("#video-gallery", "#video-pagination", videoFiles, currentVideoPage, function(page) {
+            currentVideoPage = page;
+            displayPaginatedFiles("#video-gallery", "#video-pagination", videoFiles, page);
+          });
+          
+          displayPaginatedFiles("#other-files", "#other-pagination", otherFiles, currentOtherPage, function(page) {
+            currentOtherPage = page;
+            displayPaginatedFiles("#other-files", "#other-pagination", otherFiles, page);
+          });
+        }
+
+        // Hiển thị tệp với phân trang
+        function displayPaginatedFiles(gallerySelector, paginationSelector, files, page, pageChangeCallback) {
+          const galleryElement = $(gallerySelector);
+          const paginationElement = $(paginationSelector);
+          
+          galleryElement.empty();
+          paginationElement.empty();
+          
+          if (files.length === 0) {
+            galleryElement.html('<div class="empty-gallery"><p class="empty-gallery-message">Không có tệp nào.</p></div>');
+            return;
+          }
+          
+          // Tính toán phân trang
+          const totalPages = Math.ceil(files.length / itemsPerPage);
+          const startIndex = (page - 1) * itemsPerPage;
+          const endIndex = Math.min(startIndex + itemsPerPage, files.length);
+          const pageFiles = files.slice(startIndex, endIndex);
+          
+          // Hiển thị tệp trong trang hiện tại
+          pageFiles.forEach(function (file) {
+            const filePath = "/uploads/" + file.name;
+            const fileExtension = file.name.split(".").pop().toLowerCase();
+            let galleryItem = $('<div class="gallery-item"></div>');
+            
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+              galleryItem.append('<img src="' + filePath + '" alt="' + file.name + '" loading="lazy" />');
+            } else if (['mp4', 'mov', 'webm', 'avi'].includes(fileExtension)) {
+              galleryItem.append('<video controls><source src="' + filePath + '" type="video/' + (fileExtension === 'mov' ? 'quicktime' : fileExtension) + '">Your browser does not support the video tag.</video>');
+            } else {
+              galleryItem.append('<div style="height: 200px; background-color: #f9bc60; display: flex; align-items: center; justify-content: center;"><span style="font-size: 24px; color: #004643;">FILE</span></div>');
+            }
+            
+            // Thêm thông tin tệp
+            const itemInfo = $('<div class="gallery-item-info"></div>');
+            itemInfo.append('<div class="gallery-item-name">' + file.name + '</div>');
+            
+            // Thêm badges với thông tin thêm
+            const itemBadges = $('<div class="gallery-item-badges"></div>');
+            
+            // Hiển thị kích thước
+            const fileSizeBadge = $('<span class="gallery-item-badge file-size"></span>');
+            fileSizeBadge.text(formatFileSize(file.size));
+            itemBadges.append(fileSizeBadge);
+            
+            // Hiển thị ngày
+            const fileDateBadge = $('<span class="gallery-item-badge file-date"></span>');
+            const dateObj = new Date(file.modified);
+            fileDateBadge.text(dateObj.toLocaleDateString('vi-VN'));
+            itemBadges.append(fileDateBadge);
+            
+            // Thêm metadata
+            const fileType = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension) ? 'Hình ảnh' : 
+                            (['mp4', 'mov', 'webm', 'avi'].includes(fileExtension) ? 'Video' : 'Tệp');
+            itemInfo.append('<div class="gallery-item-meta">Loại: ' + fileType + '</div>');
+            
+            // Thêm badges vào item info
+            itemInfo.append(itemBadges);
+            galleryItem.append(itemInfo);
+            
+            // Thêm các nút hành động
+            const buttonsDiv = $('<div class="gallery-item-buttons"></div>');
+            buttonsDiv.append('<a href="' + filePath + '" download class="gallery-item-button">Tải xuống</a>');
+            buttonsDiv.append('<button class="gallery-item-button view-details">Chi tiết</button>');
+            galleryItem.append(buttonsDiv);
+            
+            // Thêm sự kiện click để xem chi tiết
+            galleryItem.find('.view-details').click(function() {
+              showFileDetails(file);
+            });
+            
+            galleryElement.append(galleryItem);
+          });
+          
+          // Tạo phân trang nếu cần
+          if (totalPages > 1) {
+            // Nút previous
+            paginationElement.append('<button class="pagination-button' + (page === 1 ? ' disabled' : '') + '" ' + 
+                                  (page === 1 ? 'disabled' : 'data-page="' + (page - 1) + '"') + 
+                                  '>&laquo;</button>');
+            
+            // Các nút trang
+            const maxButtons = 5;
+            const startButton = Math.max(1, Math.min(page - Math.floor(maxButtons / 2), totalPages - maxButtons + 1));
+            const endButton = Math.min(totalPages, startButton + maxButtons - 1);
+            
+            for (let i = startButton; i <= endButton; i++) {
+              paginationElement.append('<button class="pagination-button' + (i === page ? ' active' : '') + '" data-page="' + i + '">' + i + '</button>');
+            }
+            
+            // Nút next
+            paginationElement.append('<button class="pagination-button' + (page === totalPages ? ' disabled' : '') + '" ' + 
+                                  (page === totalPages ? 'disabled' : 'data-page="' + (page + 1) + '"') + 
+                                  '>&raquo;</button>');
+            
+            // Thêm event listener cho các nút phân trang
+            paginationElement.find('button:not(.disabled)').click(function() {
+              const page = parseInt($(this).attr('data-page'));
+              pageChangeCallback(page);
+            });
+          }
+        }
+
+        // Xử lý sự kiện xóa bộ lọc
+        $('#clear-filters').click(function() {
+          $('#search-input').val('');
+          $('#filter-type').val('all');
+          $('#sort-by').val('date');
+          searchTerm = '';
+          currentFilter = 'all';
+          currentSort = 'name';
+          currentImagePage = 1;
+          currentVideoPage = 1; 
+          currentOtherPage = 1;
+          applyFiltersAndSearch();
+        });
+
+        // Xử lý sự kiện tìm kiếm  
+        $('#search-button').click(function() {
+          searchTerm = $('#search-input').val().trim();
+          currentImagePage = 1;
+          currentVideoPage = 1;
+          currentOtherPage = 1;
+          applyFiltersAndSearch();
+        });
+
+        // Xử lý tìm kiếm khi nhấn Enter
+        $('#search-input').keypress(function(e) {
+          if (e.which === 13) {
+            $('#search-button').click();
+          }
+        });
+
+        // Xử lý sự kiện lọc
+        $('#filter-type').change(function() {
+          currentFilter = $(this).val();
+          currentImagePage = 1;
+          currentVideoPage = 1;
+          currentOtherPage = 1;
+          applyFiltersAndSearch();
+        });
+
+        // Xử lý sự kiện sắp xếp
+        $('#sort-by').change(function() {
+          currentSort = $(this).val();
+          currentImagePage = 1;
+          currentVideoPage = 1;
+          currentOtherPage = 1;
+          applyFiltersAndSearch();
+        });
+
+        // Khởi tạo trang
+        fetchFiles();
+
+        // Tự động làm mới sau mỗi 30 giây
+        setInterval(fetchFiles, 30000);
       });
     </script>
   </div>

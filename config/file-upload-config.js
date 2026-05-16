@@ -26,15 +26,17 @@ function fileNameConvention(req, file, callback) {
   callback(null, Date.now() + '-' + file.originalname.replace(/ /g, '_'));
 }
 
+// Tăng giới hạn tối đa cho upload
 const limits = {
-  fileSize: parseInt(process.env.FILE_SIZE) * 1024 * 1024 // 200MB
+  fileSize: 10 * 1024 * 1024 * 1024, // 10GB max file size
+  fieldSize: 10 * 1024 * 1024 * 1024, // 10GB field size
+  files: 100, // Số lượng file tối đa
+  parts: 10000, // Số phần tối đa trong multipart
+  headerPairs: 2000 // Số cặp header tối đa
 }
 
-
-const storage = multer.diskStorage({
-  destination: destinationPath,
-  filename: fileNameConvention
-});
+// Sử dụng memory storage để tăng tốc độ
+const storage = multer.memoryStorage();
 
 const fileUploadConfig = {
   fileFilter: fileFilter,

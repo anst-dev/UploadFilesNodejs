@@ -1,15 +1,45 @@
 <html>
   <head>
     <script src='js/video_upload.js'></script>
+    <style>
+      .size-info {
+        margin: 10px 0;
+        color: #666;
+      }
+      #progress-container {
+        display: none;
+        width: 100%;
+        background-color: #f0f0f0;
+        margin: 10px 0;
+        border-radius: 4px;
+      }
+      #progress-fill {
+        width: 0;
+        height: 20px;
+        background-color: #4CAF50;
+        border-radius: 4px;
+        transition: width 0.3s ease-in-out;
+      }
+      #progress-text {
+        text-align: center;
+        line-height: 20px;
+        color: white;
+      }
+    </style>
   </head>
   <body>
-    <div>
-      <form action="/" method="post" enctype="multipart/form-data">
-        Select file to upload:
-        <input accept="video/mp4" type="file" name="user-file">
-        <input type="submit" value="Upload File" name="submit">
+    <div id="main-div">
+      <form id="upload-form" action="/" method="post" enctype="multipart/form-data" onsubmit="onSubmit(event)">
+        <div>Select file to upload:</div>
+        <input id="file-input" accept="video/mp4" type="file" name="user-file" onchange="updateFileInfo()">
+        <input id="submit" type="submit" value="Upload File" name="submit">
+        <div id="file-size" class="size-info"></div>
+        <div id="message"></div>
+        <div id="progress-container">
+          <div id="progress-fill">
+            <div id="progress-text"></div>
+          </div>
+        </div>
       </form>
     </div>
-    </div>
   </body>
-</html>
