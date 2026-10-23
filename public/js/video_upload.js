@@ -28,9 +28,9 @@ fetch("/api/interface-address")
     if (addressListContainer && data.addresses && data.addresses.length > 0) {
       addressListContainer.innerHTML = data.addresses.map(function(item) {
         return `
-          <div style="margin: 6px 0;">
-            <span style="font-size: 15px; color: #abd1c6; display: inline-block; width: 140px;">[${item.interface}]</span>
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" style="color: #f9bc60; font-weight: bold; text-decoration: none; padding: 4px 10px; background: rgba(0,0,0,0.25); border-radius: 6px; display: inline-block;">
+          <div class="address-item" style="margin: 6px 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <span class="address-tag" style="font-size: 0.85em; color: #abd1c6; display: inline-block; min-width: 120px;">[${item.interface}]</span>
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="address-link" style="color: #f9bc60; font-weight: bold; text-decoration: none; padding: 4px 10px; background: rgba(0,0,0,0.25); border-radius: 6px; display: inline-block;">
               🔗 ${item.url}
             </a>
           </div>
@@ -41,6 +41,38 @@ fetch("/api/interface-address")
   .catch((error) => {
     console.error("Lỗi khi lấy địa chỉ giao diện:", error);
   });
+
+// Quản lý Phóng to / Thu nhỏ & Ẩn / Hiện danh sách link
+let addressZoomLevel = 1.0;
+
+function changeAddressZoom(delta) {
+  const container = document.getElementById("address-list");
+  if (!container) return;
+  addressZoomLevel += delta * 0.15;
+  if (addressZoomLevel < 0.7) addressZoomLevel = 0.7;
+  if (addressZoomLevel > 1.8) addressZoomLevel = 1.8;
+  container.style.fontSize = (addressZoomLevel * 100) + "%";
+}
+
+function toggleAddressList() {
+  const container = document.getElementById("address-list");
+  const toggleBtn = document.getElementById("btn-toggle-address");
+  const zoomIn = document.getElementById("btn-zoom-in");
+  const zoomOut = document.getElementById("btn-zoom-out");
+  if (!container || !toggleBtn) return;
+
+  if (container.style.display === "none") {
+    container.style.display = "block";
+    toggleBtn.innerHTML = "👁️ Ẩn bớt";
+    if (zoomIn) zoomIn.style.display = "inline-block";
+    if (zoomOut) zoomOut.style.display = "inline-block";
+  } else {
+    container.style.display = "none";
+    toggleBtn.innerHTML = "👁️ Hiện danh sách";
+    if (zoomIn) zoomIn.style.display = "none";
+    if (zoomOut) zoomOut.style.display = "none";
+  }
+}
 
 function validateForm(customMessage) {
   const fileInput = document.getElementById("file-input") ||
