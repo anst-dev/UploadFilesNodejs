@@ -8,6 +8,12 @@ const multer = require("multer");
 app.use(express.json({limit: '10gb'}));
 app.use(express.urlencoded({extended: true, limit: '10gb'}));
 
+// Đảm bảo thư mục upload mặc định luôn tồn tại
+const uploadDir = process.env.FILE_UPLOAD_PATH || 'uploads/';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 // Cấu hình multer với giới hạn cao
 const includeMulter = multer({
   limits: {
@@ -112,6 +118,78 @@ app.get('/api/interface-address', function (req, res) {
     res.json({ interfaceAddress: ip, QR: url });
    // console.log(url)
   })
+});
+
+const { exec } = require('child_process');
+
+app.get('/api/listening-ports', function (req, res) {
+  const isWin = process.platform === 'win32';
+  const cmd = isWin ? 'netstat -ano -p tcp' : 'ss -tulpn';
+
+  exec(cmd, { maxBuffer: 1024 * 1024 * 5 }, (err, stdout, stderr) => {
+    if (err) {
+      return res.status(500).json({ error: 'Lỗi khi lấy danh sách port', details: err.message });
+    }
+
+    const ports = [];
+    const lines = stdout.split('\n');
+
+    if (isWin) {
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('TCP') && trimmed.includes('LISTENING')) {
+          const parts = trimmed.split(/\s+/);
+          const localAddr = parts[1] || '';
+          const port = localAddr.split(':').pop();
+          const pid = parts[4] || '';
+          ports.push({
+            protocol: 'TCP',
+            localAddress: localAddr,
+            port: port,
+            state: 'LISTENING',
+            pid: pid,
+            process: ''
+          });
+        }
+      }
+    } else {
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('tcp') || trimmed.startsWith('udp')) {
+          const parts = trimmed.split(/\s+/);
+          if (parts.length >= 5) {
+            const proto = parts[0];
+            const state = parts[1];
+            const localAddr = parts[4] || '';
+            const lastColon = localAddr.lastIndexOf(':');
+            const port = lastColon !== -1 ? localAddr.substring(lastColon + 1) : '';
+            const procInfo = parts.slice(6).join(' ');
+
+            let procName = '';
+            let pid = '';
+            const match = procInfo.match(/users:\(\("([^"]+)",pid=(\d+)/);
+            if (match) {
+              procName = match[1];
+              pid = match[2];
+            }
+
+            ports.push({
+              protocol: proto.toUpperCase(),
+              localAddress: localAddr,
+              port: port,
+              state: state,
+              pid: pid,
+              process: procName || procInfo
+            });
+          }
+        }
+      }
+    }
+
+    // Sắp xếp theo số port
+    ports.sort((a, b) => (parseInt(a.port, 10) || 0) - (parseInt(b.port, 10) || 0));
+    res.json({ success: true, count: ports.length, data: ports });
+  });
 });
 
 app.use("/", routes);

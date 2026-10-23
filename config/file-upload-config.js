@@ -12,14 +12,18 @@ function fileFilter (req, file, callback) {
   callback(null, true);
 }
 
+// Đảm bảo thư mục upload tồn tại mặc định
+const uploadDir = process.env.FILE_UPLOAD_PATH || 'uploads/';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 function destinationPath(req, file, callback) {
-  var stat = null;
-  try {
-    stat = fs.statSync(process.env.FILE_UPLOAD_PATH);
-  } catch (err) {
-    fs.mkdirSync(process.env.FILE_UPLOAD_PATH);
+  const dir = process.env.FILE_UPLOAD_PATH || 'uploads/';
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
-   callback(null, process.env.FILE_UPLOAD_PATH);
+  callback(null, dir);
 }
 
 function fileNameConvention(req, file, callback) {
@@ -35,8 +39,11 @@ const limits = {
   headerPairs: 2000 // Số cặp header tối đa
 }
 
-// Sử dụng memory storage để tăng tốc độ
-const storage = multer.memoryStorage();
+// Sử dụng diskStorage để lưu file vào thư mục upload
+const storage = multer.diskStorage({
+  destination: destinationPath,
+  filename: fileNameConvention
+});
 
 const fileUploadConfig = {
   fileFilter: fileFilter,

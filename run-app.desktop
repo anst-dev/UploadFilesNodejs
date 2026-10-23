@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Upload Files Server
+Comment=Khởi chạy Upload Files Node.js Server
+Exec=bash -c "cd '/home/nsta/CANHAN/UploadFilesNodejs-main' && ./startLinux.sh"
+Icon=utilities-terminal
+Terminal=true
+Categories=Utility;Application;

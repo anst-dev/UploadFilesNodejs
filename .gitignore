@@ -2,3 +2,5 @@
 /uploads
 /iisnode
 /db/uploaded-files.js
+/logs
+.env

@@ -43,8 +43,22 @@ module.exports.uploadFile = function(req, res) {
     }
 
     for (const file of req.files) {
+      const defaultUploadDir = process.env.FILE_UPLOAD_PATH || 'uploads/';
       let filePath = file.path;
-      let originalName = file.originalname;
+
+      // Nếu filePath bị undefined (ví dụ fallback bộ nhớ hoặc client gửi thiếu thông tin đường dẫn)
+      if (!filePath) {
+        if (!fs.existsSync(defaultUploadDir)) {
+          fs.mkdirSync(defaultUploadDir, { recursive: true });
+        }
+        const safeName = Date.now() + '-' + (file.originalname ? file.originalname.replace(/ /g, '_') : 'file');
+        filePath = path.join(defaultUploadDir, safeName);
+        if (file.buffer) {
+          fs.writeFileSync(filePath, file.buffer);
+        }
+      }
+
+      let originalName = file.originalname || path.basename(filePath);
       const isHeic = /\.(heic|HEIC)$/i.test(originalName);
 
       if (isHeic) {
@@ -58,16 +72,18 @@ module.exports.uploadFile = function(req, res) {
         }
       }
 
-      const fileId = path.basename(filePath, path.extname(filePath)).split('-')[0];
+      const fileBaseName = path.basename(filePath);
+      const ext = path.extname(fileBaseName);
+      const fileId = path.basename(fileBaseName, ext).split('-')[0] || Date.now().toString();
       const link = 'http://' + req.hostname + ':' + process.env.PORT + '/video/' + fileId;
       links.push(link);
       const attributesToBeSaved = {
         id: fileId,
         name: originalName,
-        size: file.size,
+        size: file.size || (fs.existsSync(filePath) ? fs.statSync(filePath).size : 0),
         path: filePath,
-        encoding: file.encoding,
-        details: req.body.details ? req.body.details : ''
+        encoding: file.encoding || '',
+        details: req.body && req.body.details ? req.body.details : ''
       };
       handleDb.saveToDB(attributesToBeSaved);
     }
