@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danh sách Cổng (Ports) đang hoạt động</title>
+  <title>Danh sách Địa chỉ & Cổng kết nối</title>
   <link rel="stylesheet" href="css/styles.css">
   <style>
     body {
@@ -15,7 +15,7 @@
     }
     .container {
       width: 95%;
-      max-width: 1200px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 30px;
       background-color: #004643;
@@ -42,86 +42,71 @@
       color: #004643;
       font-weight: bold;
     }
-    .header-bar {
+    .title {
+      font-size: 32px;
+      margin: 0 0 10px 0;
+      color: #fffffe;
+      text-align: center;
+    }
+    .subtitle {
+      font-size: 18px;
+      color: #abd1c6;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .url-card {
+      background: #003330;
+      border-radius: 10px;
+      padding: 18px 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 15px;
+      transition: transform 0.2s, background-color 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .title {
-      font-size: 32px;
-      margin: 0;
+    .url-card:hover {
+      background: #044b46;
+      transform: translateY(-2px);
+    }
+    .info-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .iface-tag {
+      display: inline-block;
+      font-size: 14px;
+      color: #abd1c6;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 3px 8px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+    .url-text {
+      font-size: 20px;
+      font-weight: bold;
       color: #fffffe;
     }
-    .btn-refresh {
+    .btn-open {
       background-color: #f9bc60;
       color: #004643;
-      border: none;
-      padding: 12px 24px;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 8px;
       font-size: 18px;
       font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       transition: opacity 0.2s;
     }
-    .btn-refresh:hover {
+    .btn-open:hover {
       opacity: 0.9;
-    }
-    .search-box {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      margin-bottom: 20px;
-      box-sizing: border-box;
-    }
-    .table-container {
-      overflow-x: auto;
-      background: #003330;
-      border-radius: 10px;
-      padding: 10px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    th, td {
-      padding: 14px 16px;
-      border-bottom: 1px solid #0f4c47;
-    }
-    th {
-      background-color: #002624;
-      color: #f9bc60;
-      font-size: 18px;
-      position: sticky;
-      top: 0;
-    }
-    tr:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    .badge-tcp {
-      background-color: #2a9d8f;
-      color: #fff;
-    }
-    .badge-udp {
-      background-color: #e76f51;
-      color: #fff;
-    }
-    .port-number {
-      font-size: 18px;
-      font-weight: bold;
-      color: #f9bc60;
     }
     .status-msg {
       text-align: center;
@@ -139,94 +124,39 @@
       <a href="/ports.html" class="nav-link active">Danh sách Port</a>
     </div>
 
-    <div class="header-bar">
-      <h1 class="title">Danh Sách Cổng Đang Hoạt Động (Listening Ports)</h1>
-      <button class="btn-refresh" onclick="loadPorts()">Làm mới</button>
-    </div>
+    <h1 class="title">Danh Sách Địa Chỉ Cổng Kết Nối</h1>
+    <p class="subtitle">Bấm vào bất kỳ địa chỉ bên dưới để mở trong một thẻ (tab) mới</p>
 
-    <input type="text" id="searchInput" class="search-box" placeholder="Tìm kiếm theo Port, Tiến trình, Địa chỉ..." oninput="filterPorts()">
-
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Giao thức</th>
-            <th>Port</th>
-            <th>Địa chỉ Local</th>
-            <th>Trạng thái</th>
-            <th>PID</th>
-            <th>Tiến trình (Process)</th>
-          </tr>
-        </thead>
-        <tbody id="portsTableBody">
-          <tr>
-            <td colspan="6" class="status-msg">Đang tải danh sách port...</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="card-list" id="urlsContainer">
+      <div class="status-msg">Đang tải danh sách địa chỉ server...</div>
     </div>
   </div>
 
   <script>
-    let allPorts = [];
-
-    function loadPorts() {
-      const tbody = document.getElementById('portsTableBody');
-      tbody.innerHTML = '<tr><td colspan="6" class="status-msg">Đang tải danh sách port...</td></tr>';
-
-      fetch('/api/listening-ports')
-        .then(res => res.json())
-        .then(res => {
-          if (res.success && res.data) {
-            allPorts = res.data;
-            renderPorts(allPorts);
-          } else {
-            tbody.innerHTML = '<tr><td colspan="6" class="status-msg" style="color: #e16162;">Không thể lấy danh sách port!</td></tr>';
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          tbody.innerHTML = '<tr><td colspan="6" class="status-msg" style="color: #e16162;">Lỗi kết nối API!</td></tr>';
-        });
-    }
-
-    function renderPorts(ports) {
-      const tbody = document.getElementById('portsTableBody');
-      if (ports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="status-msg">Không tìm thấy port nào phù hợp.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = ports.map(item => `
-        <tr>
-          <td><span class="badge ${item.protocol === 'UDP' ? 'badge-udp' : 'badge-tcp'}">${item.protocol}</span></td>
-          <td class="port-number">${item.port || '-'}</td>
-          <td>${item.localAddress || '-'}</td>
-          <td><span style="color: #57cb99; font-weight: bold;">${item.state || 'LISTEN'}</span></td>
-          <td>${item.pid || '-'}</td>
-          <td><strong>${item.process || '-'}</strong></td>
-        </tr>
-      `).join('');
-    }
-
-    function filterPorts() {
-      const query = document.getElementById('searchInput').value.trim().toLowerCase();
-      if (!query) {
-        renderPorts(allPorts);
-        return;
-      }
-      const filtered = allPorts.filter(item => 
-        (item.port && item.port.toString().includes(query)) ||
-        (item.localAddress && item.localAddress.toLowerCase().includes(query)) ||
-        (item.process && item.process.toLowerCase().includes(query)) ||
-        (item.pid && item.pid.toString().includes(query)) ||
-        (item.protocol && item.protocol.toLowerCase().includes(query))
-      );
-      renderPorts(filtered);
-    }
-
-    // Tự động tải khi mở trang
-    loadPorts();
+    fetch('/api/server-addresses')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('urlsContainer');
+        if (data.addresses && data.addresses.length > 0) {
+          container.innerHTML = data.addresses.map(item => `
+            <div class="url-card">
+              <div class="info-left">
+                <span class="iface-tag">Card mạng: ${item.interface}</span>
+                <span class="url-text">${item.url}</span>
+              </div>
+              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn-open">
+                Mở tab mới ↗
+              </a>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<div class="status-msg">Không tìm thấy địa chỉ nào!</div>';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('urlsContainer').innerHTML = '<div class="status-msg" style="color: #e16162;">Lỗi khi tải danh sách!</div>';
+      });
   </script>
 </body>
 </html>

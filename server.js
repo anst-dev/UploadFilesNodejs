@@ -27,15 +27,28 @@ let open;
 
 var QRCode = require('qrcode')
 const os = require("os");
-const networkInterfaces = os.networkInterfaces();
 
-for (let interface in networkInterfaces) {
-  for (let interfaceInfo of networkInterfaces[interface]) {
-    if (interfaceInfo.family === "IPv4" && !interfaceInfo.internal) {
-      var ip = "http://" + interfaceInfo.address + ":" + process.env.PORT;
-      console.log(ip);
+function getAvailableInterfaces() {
+  const networkInterfaces = os.networkInterfaces();
+  const list = [];
+  for (let iface in networkInterfaces) {
+    for (let info of networkInterfaces[iface]) {
+      if (info.family === "IPv4" && !info.internal) {
+        list.push({
+          interface: iface,
+          address: info.address,
+          url: "http://" + info.address + ":" + process.env.PORT
+        });
+      }
     }
   }
+  return list;
+}
+
+const interfacesList = getAvailableInterfaces();
+for (let item of interfacesList) {
+  var ip = item.url;
+  console.log(item.url);
 }
 // app.use(multer().any());
 function shouldParseRequest(req) {
@@ -114,10 +127,23 @@ app.get('/get-uploads', function (req, res) {
 });
 
 app.get('/api/interface-address', function (req, res) {
-  QRCode.toDataURL(ip, function (err, url) {
-    res.json({ interfaceAddress: ip, QR: url });
-   // console.log(url)
-  })
+  const list = getAvailableInterfaces();
+  const currentIp = ip || (list.length > 0 ? list[0].url : ("http://localhost:" + process.env.PORT));
+  QRCode.toDataURL(currentIp, function (err, url) {
+    res.json({
+      interfaceAddress: currentIp,
+      QR: url,
+      addresses: list
+    });
+  });
+});
+
+app.get('/api/server-addresses', function (req, res) {
+  const list = getAvailableInterfaces();
+  res.json({
+    port: process.env.PORT,
+    addresses: list
+  });
 });
 
 const { exec } = require('child_process');

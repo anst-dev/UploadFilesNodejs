@@ -18,10 +18,24 @@ fetch("/api/interface-address")
     var ipElement = document.getElementById("ip-address");
     var qrElement = document.getElementById("qr-image");
     if (ipElement) {
-      ipElement.innerHTML = interfaceAddress;
+      ipElement.innerHTML = `<a href="${interfaceAddress}" target="_blank" style="color: #f9bc60; text-decoration: underline;">${interfaceAddress}</a>`;
     }
     if (qrElement) {
       qrElement.src = qrImage;
+    }
+
+    var addressListContainer = document.getElementById("address-list");
+    if (addressListContainer && data.addresses && data.addresses.length > 0) {
+      addressListContainer.innerHTML = data.addresses.map(function(item) {
+        return `
+          <div style="margin: 6px 0;">
+            <span style="font-size: 15px; color: #abd1c6; display: inline-block; width: 140px;">[${item.interface}]</span>
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" style="color: #f9bc60; font-weight: bold; text-decoration: none; padding: 4px 10px; background: rgba(0,0,0,0.25); border-radius: 6px; display: inline-block;">
+              🔗 ${item.url}
+            </a>
+          </div>
+        `;
+      }).join('');
     }
   })
   .catch((error) => {
