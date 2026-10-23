@@ -42,35 +42,17 @@ fetch("/api/interface-address")
     console.error("Lỗi khi lấy địa chỉ giao diện:", error);
   });
 
-// Quản lý Phóng to / Thu nhỏ & Ẩn / Hiện danh sách link
-let addressZoomLevel = 1.0;
-
-function changeAddressZoom(delta) {
-  const container = document.getElementById("address-list");
-  if (!container) return;
-  addressZoomLevel += delta * 0.15;
-  if (addressZoomLevel < 0.7) addressZoomLevel = 0.7;
-  if (addressZoomLevel > 1.8) addressZoomLevel = 1.8;
-  container.style.fontSize = (addressZoomLevel * 100) + "%";
-}
-
 function toggleAddressList() {
   const container = document.getElementById("address-list");
   const toggleBtn = document.getElementById("btn-toggle-address");
-  const zoomIn = document.getElementById("btn-zoom-in");
-  const zoomOut = document.getElementById("btn-zoom-out");
   if (!container || !toggleBtn) return;
 
   if (container.style.display === "none") {
     container.style.display = "block";
     toggleBtn.innerHTML = "👁️ Ẩn bớt";
-    if (zoomIn) zoomIn.style.display = "inline-block";
-    if (zoomOut) zoomOut.style.display = "inline-block";
   } else {
     container.style.display = "none";
     toggleBtn.innerHTML = "👁️ Hiện danh sách";
-    if (zoomIn) zoomIn.style.display = "none";
-    if (zoomOut) zoomOut.style.display = "none";
   }
 }
 

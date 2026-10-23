@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <script src='js/video_upload.js?v=3'></script>
+  <script src='js/video_upload.js?v=4'></script>
   <link rel="stylesheet" href="css/styles.css">
   <style>
     body {
@@ -122,10 +122,8 @@
           <div style="font-size: 18px; color: #f9bc60; font-weight: bold;">
             📋 Danh sách IP / URL của máy (bấm vào để mở tab mới):
           </div>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <button type="button" id="btn-zoom-in" onclick="changeAddressZoom(1)" style="background: #004643; color: #fffffe; border: 1px solid #f9bc60; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 14px; font-weight: bold;" title="Phóng to danh sách link">🔍 Phóng to +</button>
-            <button type="button" id="btn-zoom-out" onclick="changeAddressZoom(-1)" style="background: #004643; color: #fffffe; border: 1px solid #f9bc60; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 14px; font-weight: bold;" title="Thu nhỏ danh sách link">Thu nhỏ -</button>
-            <button type="button" id="btn-toggle-address" onclick="toggleAddressList()" style="background: #f9bc60; color: #004643; border: none; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 14px; font-weight: bold;" title="Ẩn hoặc hiện danh sách link">👁️ Ẩn bớt</button>
+          <div>
+            <button type="button" id="btn-toggle-address" onclick="toggleAddressList()" style="background: #f9bc60; color: #004643; border: none; border-radius: 6px; padding: 5px 14px; cursor: pointer; font-size: 14px; font-weight: bold;" title="Ẩn hoặc hiện danh sách link">👁️ Ẩn bớt</button>
           </div>
         </div>
         <div id="address-list" style="transition: font-size 0.2s ease, max-height 0.3s ease; overflow-y: auto; max-height: 400px;">Đang tải danh sách...</div>

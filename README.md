@@ -11,7 +11,7 @@
 - **Mã QR & Danh sách IP mở tab nhanh**:
   - Tự động tạo mã QR quét nhanh bằng điện thoại để mở trang upload ngay lập tức.
   - Hiển thị danh sách tất cả các IP / URL của máy (mạng LAN, WiFi, Tailscale...) có nút bấm mở tab mới trực tiếp.
-  - Hỗ trợ **Phóng to (+) / Thu nhỏ (-)** cỡ chữ và nút **Ẩn / Hiện** danh sách link.
+  - Hỗ trợ nút **Ẩn / Hiện** danh sách link giúp giao diện luôn gọn gàng.
 - **Âm thanh thông báo**: Phát chuông hợp âm (Web Audio API) ngay khi hoàn tất tải file lên thành công.
 - **Tab Danh sách Port**: Tab quản lý hiển thị các địa chỉ IP và cổng mạng đang hoạt động (`/ports.html`).
 - **Thư viện tệp (Gallery)**: Quản lý, tìm kiếm, lọc theo loại file (Hình ảnh, Video, Khác), phân trang và xem chi tiết file.
