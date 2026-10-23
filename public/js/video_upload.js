@@ -85,6 +85,64 @@ function validateForm(customMessage) {
   return true;
 }
 
+// Quản lý giữ sáng màn hình điện thoại (Screen Wake Lock API + Fake Video Loop)
+let wakeLockObj = null;
+
+async function acquireWakeLock() {
+  const statusEl = document.getElementById("wake-lock-status");
+  if (statusEl) {
+    statusEl.style.display = "block";
+  }
+
+  // 1. Screen Wake Lock API (cho thiết bị và trình duyệt đời mới hỗ trợ)
+  if ('wakeLock' in navigator) {
+    try {
+      wakeLockObj = await navigator.wakeLock.request('screen');
+    } catch (err) {
+      console.warn("Screen Wake Lock API không khả dụng:", err);
+    }
+  }
+
+  // 2. Kỹ thuật Fake Video Loop (hỗ trợ toàn diện máy cũ, iOS Safari, Android)
+  const fakeVideo = document.getElementById("wake-lock-video");
+  if (fakeVideo) {
+    try {
+      fakeVideo.currentTime = 0;
+      const playPromise = fakeVideo.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn("Fake video play prevented:", err);
+        });
+      }
+    } catch (err) {
+      console.warn("Lỗi phát fake video:", err);
+    }
+  }
+}
+
+function releaseWakeLock() {
+  const statusEl = document.getElementById("wake-lock-status");
+  if (statusEl) {
+    statusEl.style.display = "none";
+  }
+
+  // 1. Thả WakeLock API
+  if (wakeLockObj) {
+    try {
+      wakeLockObj.release();
+      wakeLockObj = null;
+    } catch (err) {}
+  }
+
+  // 2. Tạm dừng Fake Video Loop
+  const fakeVideo = document.getElementById("wake-lock-video");
+  if (fakeVideo) {
+    try {
+      fakeVideo.pause();
+    } catch (err) {}
+  }
+}
+
 function uploadVideo(customMessage) {
   try {
     const submitButton = document.getElementById("submit");
@@ -109,6 +167,9 @@ function uploadVideo(customMessage) {
       throw new Error("Không tìm thấy form hoặc file để upload");
     }
 
+    // Kích hoạt giữ sáng màn hình trong suốt quá trình tải file
+    acquireWakeLock();
+
     lastLoaded = 0;
     lastTime = Date.now();
 
@@ -117,6 +178,7 @@ function uploadVideo(customMessage) {
 
     request.onerror = function(error) {
       console.error("Lỗi khi upload:", error);
+      releaseWakeLock();
       if (customMessage) {
         customMessage.innerHTML = "Có lỗi xảy ra khi tải lên";
         customMessage.className = "error";
@@ -134,6 +196,7 @@ function uploadVideo(customMessage) {
 
   } catch (error) {
     console.error("Lỗi trong quá trình upload:", error);
+    releaseWakeLock();
     if (customMessage) {
       customMessage.innerHTML = error.message || "Có lỗi xảy ra khi tải lên";
       customMessage.className = "error";
@@ -217,6 +280,7 @@ function onComplete(event) {
   if (submitButton) {
     submitButton.disabled = false;
   }
+  releaseWakeLock();
 }
 
 function formatFileSize(bytes) {
