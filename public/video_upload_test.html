@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <script src='js/video_upload.js?v=4'></script>
+  <script src='js/video_upload.js?v=5'></script>
   <link rel="stylesheet" href="css/styles.css">
   <style>
     body {
@@ -118,15 +118,15 @@
       <p style="color: #fffffe; font-size: 22px; margin-bottom: 8px;">Nhập trên điện thoại, thiết bị: <span id="ip-address"></span></p>
       
       <div id="address-box-wrapper" style="background: rgba(0,0,0,0.25); border-radius: 10px; padding: 12px 15px; margin-bottom: 15px; color: #fffffe; border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s ease;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-          <div style="font-size: 18px; color: #f9bc60; font-weight: bold;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; cursor: pointer;" onclick="toggleAddressList()">
+          <div style="font-size: 18px; color: #f9bc60; font-weight: bold; user-select: none;">
             📋 Danh sách IP / URL của máy (bấm vào để mở tab mới):
           </div>
           <div>
-            <button type="button" id="btn-toggle-address" onclick="toggleAddressList()" style="background: #f9bc60; color: #004643; border: none; border-radius: 6px; padding: 5px 14px; cursor: pointer; font-size: 14px; font-weight: bold;" title="Ẩn hoặc hiện danh sách link">👁️ Ẩn bớt</button>
+            <button type="button" id="btn-toggle-address" onclick="event.stopPropagation(); toggleAddressList();" style="background: #f9bc60; color: #004643; border: none; border-radius: 6px; padding: 5px 14px; cursor: pointer; font-size: 14px; font-weight: bold;" title="Ẩn hoặc hiện danh sách link">👁️ Hiện danh sách</button>
           </div>
         </div>
-        <div id="address-list" style="transition: font-size 0.2s ease, max-height 0.3s ease; overflow-y: auto; max-height: 400px;">Đang tải danh sách...</div>
+        <div id="address-list" style="display: none; margin-top: 10px; transition: font-size 0.2s ease, max-height 0.3s ease; overflow-y: auto; max-height: 400px;">Đang tải danh sách...</div>
       </div>
     </div>
 

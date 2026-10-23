@@ -47,7 +47,8 @@ function toggleAddressList() {
   const toggleBtn = document.getElementById("btn-toggle-address");
   if (!container || !toggleBtn) return;
 
-  if (container.style.display === "none") {
+  const isHidden = container.style.display === "none" || (window.getComputedStyle && window.getComputedStyle(container).display === "none");
+  if (isHidden) {
     container.style.display = "block";
     toggleBtn.innerHTML = "👁️ Ẩn bớt";
   } else {
