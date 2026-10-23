@@ -3,4 +3,5 @@
 /iisnode
 /db/uploaded-files.js
 /logs
+/target
 .env
