@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <script src='js/video_upload.js'></script>
+  <script src='js/video_upload.js?v=2'></script>
   <link rel="stylesheet" href="css/styles.css">
   <style>
     body {
@@ -117,12 +117,12 @@
     <div>
       <p style="color: #fffffe; font-size: 22px; margin-bottom: 8px;">Nhập trên điện thoại, thiết bị: <span id="ip-address"></span></p>
       
-      <details style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px 15px; margin-bottom: 15px; color: #fffffe;">
-        <summary style="cursor: pointer; font-size: 18px; color: #f9bc60; font-weight: bold; user-select: none;">
-          📋 Danh sách IP / URL khác của máy (bấm để mở tab mới)
-        </summary>
-        <div id="address-list" style="margin-top: 10px;">Đang tải danh sách...</div>
-      </details>
+      <div style="background: rgba(0,0,0,0.25); border-radius: 10px; padding: 12px 15px; margin-bottom: 15px; color: #fffffe; border: 1px solid rgba(255,255,255,0.15);">
+        <div style="font-size: 18px; color: #f9bc60; font-weight: bold; margin-bottom: 8px;">
+          📋 Danh sách IP / URL của máy (bấm vào để mở tab mới):
+        </div>
+        <div id="address-list">Đang tải danh sách...</div>
+      </div>
     </div>
 
     <div class="qr-container">
